@@ -1,0 +1,5 @@
+# Environment variables
+[env]
+
+# 
+RUST_LOG="rust_web_app=debug"
