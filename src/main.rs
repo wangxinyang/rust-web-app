@@ -2,13 +2,17 @@
 
 // region:    --- Modules
 
+mod config;
 mod ctx;
 mod error;
 mod log;
 mod model;
 mod web;
 
-pub use self::error::{Error, Result};
+// pub use self::error::{Error, Result};
+use self::error::{Error, Result};
+// re-export something
+pub use config::config;
 
 use crate::model::ModelManager;
 use crate::web::mw_auth::mw_ctx_resolve;
