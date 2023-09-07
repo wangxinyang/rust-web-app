@@ -30,8 +30,6 @@ async fn main() -> Result<()> {
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    info!("test");
-
     // Initialize ModelManager.
     let mm = ModelManager::new().await?;
 
@@ -49,7 +47,6 @@ async fn main() -> Result<()> {
 
     // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-    println!("Listening on {}", addr);
     info!("{:<12} - {addr}\n", "LISTENING");
     axum::Server::bind(&addr)
         .serve(routes_all.into_make_service())

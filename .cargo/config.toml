@@ -1,5 +1,5 @@
 # Environment variables
 [env]
 
-# 
+# Rust 的模块和包名不支持使用 -, 使用下划线代替
 RUST_LOG="rust_web_app=debug"
