@@ -9,6 +9,9 @@ mod log;
 mod model;
 mod web;
 
+// Commented during early development
+mod _dev_utils;
+
 // pub use self::error::{Error, Result};
 use self::error::{Error, Result};
 // re-export something
