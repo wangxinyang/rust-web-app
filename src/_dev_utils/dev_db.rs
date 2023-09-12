@@ -26,11 +26,11 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
         pexec(&root_db, SQL_RECREATE_DB).await?;
     }
 
-    let paths: Vec<PathBuf> = fs::read_dir(SQL_DIR)?
+    let mut paths: Vec<PathBuf> = fs::read_dir(SQL_DIR)?
         .filter_map(|entry| entry.ok().map(|e| e.path()))
         .collect();
 
-    // paths.sort();
+    paths.sort();
 
     // SQL exexute each file
     let app_db = new_db_pool(PG_DEV_APP_URL).await?;
