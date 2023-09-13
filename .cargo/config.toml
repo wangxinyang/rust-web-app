@@ -4,6 +4,9 @@
 # Rust 的模块和包名不支持使用 -, 使用下划线代替
 RUST_LOG="rust_web_app=debug"
 
+
+SERVICE_DB_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
 SERVICE_WEB_FOLDER="web-folder/"
