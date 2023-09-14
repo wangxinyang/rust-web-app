@@ -31,7 +31,6 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
 
     paths.sort();
-
     // SQL exexute each file
     let app_db = new_db_pool(PG_DEV_APP_URL).await?;
     for path in paths {
@@ -42,7 +41,6 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-
     Ok(())
 }
 

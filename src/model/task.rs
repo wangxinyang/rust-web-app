@@ -48,7 +48,7 @@ impl TaskBmc {
             (0) -> T1;
         )
         */
-        let (id,) = sqlx::query_as("INSERT INTO tasks (title) VALUES ($1) RETURNING id")
+        let (id,) = sqlx::query_as("INSERT INTO task (title) VALUES ($1) RETURNING id")
             .bind(task_c.title)
             .fetch_one(db)
             .await?; // 在这里可以使用？的原因是在model::Error中已经实现了From<sqlx::Error>
@@ -80,14 +80,14 @@ mod tests {
         let id = TaskBmc::create(ctx, &mm, task_c).await?;
 
         // Check
-        let (title,): (String,) = sqlx::query_as("SELECT title FROM tasks WHERE id = $1")
+        let (title,): (String,) = sqlx::query_as("SELECT title FROM task WHERE id = $1")
             .bind(id)
             .fetch_one(mm.db())
             .await?;
         assert_eq!(title, fx_title);
 
         // --Cleanup
-        let count = sqlx::query("DELETE FROM tasks WHERE id = $1")
+        let count = sqlx::query("DELETE FROM task WHERE id = $1")
             .bind(id)
             .execute(mm.db())
             .await?
