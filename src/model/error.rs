@@ -7,6 +7,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[serde_as]
 #[derive(Debug, Serialize)]
 pub enum Error {
+    EntityNotFound { entity: &'static str, id: i64 },
+
     Store(store::Error),
     // fix: the trait bound `sqlx::Error: Serialize` is not satisfied
     //   the following other types implement trait `Serialize`:

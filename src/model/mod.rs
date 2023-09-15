@@ -1,6 +1,6 @@
 mod error;
 mod store;
-mod task;
+pub mod task;
 
 pub use self::error::{Error, Result};
 
