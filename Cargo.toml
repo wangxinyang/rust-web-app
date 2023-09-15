@@ -18,7 +18,9 @@ tower-http = {version = "0.4", features = ["fs"]}
 tower-cookies = "0.9"
 
 # Database
-sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "time"]}
+# sqlb0.3 is not matched with sqlx 0.7
+sqlx = {version = "0.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "time"]}
+sqlb = "0.3"
 
 # tracing
 tracing = "0.1"

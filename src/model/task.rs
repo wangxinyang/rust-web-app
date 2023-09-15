@@ -5,7 +5,10 @@ use crate::{
     model::{Error, Result},
 };
 
-use super::ModelManager;
+use super::{
+    base::{self, DbBmc},
+    ModelManager,
+};
 
 #[derive(Debug, FromRow)]
 pub struct Task {
@@ -22,6 +25,10 @@ pub struct TaskUpdate {
 }
 
 pub struct TaskBmc;
+
+impl DbBmc for TaskBmc {
+    const TABLE: &'static str = "task";
+}
 
 impl TaskBmc {
     pub async fn create(_ctx: &Ctx, mm: &ModelManager, task_c: TaskForCreate) -> Result<i64> {
@@ -70,16 +77,8 @@ impl TaskBmc {
         Ok(tasks)
     }
 
-    pub async fn get(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<Task> {
-        let db = mm.db();
-
-        let task: Task = sqlx::query_as("Select * from task where id = $1")
-            .bind(id)
-            .fetch_optional(db)
-            .await?
-            .ok_or(Error::EntityNotFound { entity: "task", id })?;
-
-        Ok(task)
+    pub async fn get(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<Task> {
+        base::get::<Self, _>(ctx, mm, id).await
     }
 
     pub async fn delete(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> {
