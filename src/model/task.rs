@@ -1,3 +1,4 @@
+use sqlb::Fields;
 use sqlx::FromRow;
 
 use crate::{
@@ -10,16 +11,18 @@ use super::{
     ModelManager,
 };
 
-#[derive(Debug, FromRow)]
+#[derive(Debug, FromRow, Fields)]
 pub struct Task {
     pub id: i64,
     pub title: String,
 }
 
+#[derive(Fields)]
 pub struct TaskForCreate {
     pub title: String,
 }
 
+#[derive(Fields)]
 pub struct TaskUpdate {
     pub title: Option<String>,
 }
@@ -31,8 +34,8 @@ impl DbBmc for TaskBmc {
 }
 
 impl TaskBmc {
-    pub async fn create(_ctx: &Ctx, mm: &ModelManager, task_c: TaskForCreate) -> Result<i64> {
-        let db = mm.db();
+    pub async fn create(ctx: &Ctx, mm: &ModelManager, task_c: TaskForCreate) -> Result<i64> {
+        // let db = mm.db();
 
         // query_as返回一个QueryAs的结构体，
         // 其中的O类型为实现了FromRow trait的类型 O: for<'r> FromRow<'r, DB::Row>,
@@ -59,30 +62,37 @@ impl TaskBmc {
             (0) -> T1;
         )
         */
-        let (id,) = sqlx::query_as("INSERT INTO task (title) VALUES ($1) RETURNING id")
+        /*         let (id,) = sqlx::query_as("INSERT INTO task (title) VALUES ($1) RETURNING id")
             .bind(task_c.title)
             .fetch_one(db)
             .await?; // 在这里可以使用？的原因是在model::Error中已经实现了From<sqlx::Error>
 
-        Ok(id)
+        Ok(id) */
+
+        base::create::<Self, _>(ctx, mm, task_c).await
     }
 
-    pub async fn list(_ctx: &Ctx, mm: &ModelManager) -> Result<Vec<Task>> {
-        let db = mm.db();
+    pub async fn list(ctx: &Ctx, mm: &ModelManager) -> Result<Vec<Task>> {
+        /*  let db = mm.db();
 
         let tasks: Vec<Task> = sqlx::query_as("Select * from task order by id")
             .fetch_all(db)
             .await?;
 
-        Ok(tasks)
+        Ok(tasks) */
+        base::list::<Self, _>(ctx, mm).await
     }
 
     pub async fn get(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<Task> {
         base::get::<Self, _>(ctx, mm, id).await
     }
 
-    pub async fn delete(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> {
-        let db = mm.db();
+    pub async fn update(ctx: &Ctx, mm: &ModelManager, id: i64, task_u: TaskUpdate) -> Result<()> {
+        base::update::<Self, _>(ctx, mm, id, task_u).await
+    }
+
+    pub async fn delete(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> {
+        /* let db = mm.db();
 
         let count = sqlx::query("DELETE FROM task WHERE id = $1")
             .bind(id)
@@ -94,7 +104,8 @@ impl TaskBmc {
             return Err(Error::EntityNotFound { entity: "task", id });
         }
 
-        Ok(())
+        Ok(()) */
+        base::delete::<Self>(ctx, mm, id).await
     }
 }
 
@@ -179,6 +190,36 @@ mod tests {
         for task in tasks {
             TaskBmc::delete(&ctx, &mm, task.id).await?;
         }
+
+        Ok(())
+    }
+
+    #[serial]
+    #[tokio::test]
+    async fn test_update_ok() -> Result<()> {
+        // Setup && Features
+        let mm = _dev_utils::init_test().await;
+        let ctx = Ctx::root_ctx();
+        let fx_title = "test_update_ok - task 01";
+        let fx_title_new = "test_update_ok - task 01 - new";
+        let task = _dev_utils::seed_tasks(&ctx, &mm, &[fx_title])
+            .await?
+            .remove(0);
+
+        // --Exec
+        TaskBmc::update(
+            &ctx,
+            &mm,
+            task.id,
+            TaskUpdate {
+                title: Some(fx_title_new.to_string()),
+            },
+        )
+        .await?;
+
+        // Check
+        let task = TaskBmc::get(&ctx, &mm, task.id).await?;
+        assert_eq!(task.title, fx_title_new);
 
         Ok(())
     }
