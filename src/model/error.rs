@@ -1,4 +1,4 @@
-use crate::model::store;
+use crate::{crypt, model::store};
 use serde::Serialize;
 use serde_with::{serde_as, DisplayFromStr};
 
@@ -9,6 +9,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     EntityNotFound { entity: &'static str, id: i64 },
 
+    // Module
+    Crypt(crypt::Error),
     Store(store::Error),
     // fix: the trait bound `sqlx::Error: Serialize` is not satisfied
     //   the following other types implement trait `Serialize`:
@@ -20,6 +22,12 @@ pub enum Error {
 impl core::fmt::Display for Error {
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
+    }
+}
+
+impl From<crypt::Error> for Error {
+    fn from(val: crypt::Error) -> Self {
+        Self::Crypt(val)
     }
 }
 

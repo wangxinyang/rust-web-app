@@ -7,6 +7,11 @@ RUST_LOG="rust_web_app=debug"
 
 SERVICE_DB_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
 
+SERVICE_PWD_KEY="uWKqjtK_Q86U8DhvVn-vCeztNoMCCFI-z9Cbj2GCtExX4YyOR9lnyR-m8iKb9p01Xr1k58BumUdCB_QXoSU7uA"
+
+SERVICE_TOKEN_KEY="New1Z3Zp9svjyR6nKyjKpkNQI6gXTp4a0T7yMkXuVWKeqg97X_pl6YPO0rsz-mAumn0cAzAC2nHLvwjkqugnEg"
+SERVICE_TOKEN_DURATION_SEC="1800"
+
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
 SERVICE_WEB_FOLDER="web-folder/"

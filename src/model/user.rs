@@ -3,6 +3,7 @@ use sqlx::postgres::PgRow;
 use sqlx::FromRow;
 use uuid::Uuid;
 
+use crate::crypt::{pwd, EncryptContent};
 use crate::ctx::Ctx;
 use crate::model::{
     base::{self, DbBmc},
@@ -25,6 +26,7 @@ pub struct UserForInsert {
     pub username: String,
 }
 
+#[derive(Fields, FromRow)]
 pub struct UserForLogin {
     pub id: i64,
     pub username: String,
@@ -45,6 +47,7 @@ pub struct UserForAuth {
 pub trait UserBy: HasFields + for<'r> FromRow<'r, PgRow> + Send + Unpin {}
 
 impl UserBy for User {}
+impl UserBy for UserForLogin {}
 
 pub struct UserBmc;
 
@@ -81,6 +84,26 @@ impl UserBmc {
             .await?;
 
         Ok(user)
+    }
+
+    pub async fn update_pwd(ctx: &Ctx, mm: &ModelManager, id: i64, pwd: &str) -> Result<()> {
+        let db = mm.db();
+
+        let user: UserForLogin = Self::get(ctx, mm, id).await?;
+
+        let enc_pwd = pwd::encrypt_pwd(&EncryptContent {
+            content: pwd.to_string(),
+            salt: user.pwd_salt.to_string(),
+        })?;
+
+        sqlb::update()
+            .table(Self::TABLE)
+            .data(vec![("pwd", enc_pwd).into()])
+            .and_where("id", "=", id)
+            .exec(db)
+            .await?;
+
+        Ok(())
     }
 }
 
