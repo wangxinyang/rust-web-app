@@ -64,7 +64,7 @@ impl Error {
         match self {
             // -- Login
             LoginFailUsernameNotFound
-            | LoginFailUserHasNoPwd { .. }
+            | LoginFailUserHasNoPwd { .. } // 使用| 而不是使用||
             | LoginFailPwdNotMatching { .. } => (StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL),
             // -- Auth
             CtxExt(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),

@@ -31,7 +31,7 @@ async fn api_login_handler(
     } */
     let LoginPayload {
         username,
-        pwd: pwd_clear,
+        pwd: pwd_clear, // 这里使用：冒号可以修改变量的名字
     } = payload;
     let ctx = Ctx::root_ctx();
 

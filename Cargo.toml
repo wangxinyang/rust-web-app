@@ -19,8 +19,8 @@ tower-cookies = "0.9"
 
 # Database
 # sqlb0.3 is not matched with sqlx 0.7
-sqlx = {version = "0.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "time"]}
-sqlb = "0.3"
+sqlx = {version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "time"]}
+sqlb = "0.4"
 
 # tracing
 tracing = "0.1"
@@ -37,6 +37,7 @@ lazy-regex = "3"
 async-trait = "0.1"
 strum_macros = "0.25"
 uuid = {version = "1", features = ["v4", "fast-rng"]}
+time = "0.3"
 
 [dev-dependencies]
 anyhow = "1"
