@@ -8,6 +8,9 @@ use crate::{
 
 // String format: `ident_b64u.exp_b64u.sign_b64u`
 #[derive(Debug)]
+// PatialEq只在test中才需要，可以使用#[cfg_attr(, )]
+// 而不需要在struct中derive PartialEq
+#[cfg_attr(test, derive(PartialEq))]
 pub struct Token {
     pub ident: String,     // Identifier (username for example)
     pub exp: String,       // Expiration date in Rfc3339.
@@ -144,7 +147,10 @@ mod tests {
         let token = fx_token_str.parse::<Token>()?;
 
         // -- Check
-        assert_eq!(format!("{token:?}"), format!("{fx_token:?}"));
+        // assert_eq!(format!("{token:?}"), format!("{fx_token:?}"));
+        // PatialEq只在test中才需要，可以使用#[cfg_attr(, )]
+        // 而不需要在struct中derive PartialEq
+        assert_eq!(token, fx_token);
 
         Ok(())
     }
