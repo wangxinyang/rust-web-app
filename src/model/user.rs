@@ -36,6 +36,7 @@ pub struct UserForLogin {
     pub token_salt: Uuid,
 }
 
+#[derive(Fields, FromRow)]
 pub struct UserForAuth {
     pub id: i64,
     pub username: String,
@@ -48,6 +49,7 @@ pub trait UserBy: HasFields + for<'r> FromRow<'r, PgRow> + Send + Unpin {}
 
 impl UserBy for User {}
 impl UserBy for UserForLogin {}
+impl UserBy for UserForAuth {}
 
 pub struct UserBmc;
 

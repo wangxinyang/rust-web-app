@@ -16,11 +16,13 @@ mod _dev_utils;
 
 // pub use self::error::{Error, Result};
 use self::error::{Error, Result};
+use axum::response::Html;
+use axum::routing::get;
 // re-export something
 pub use config::config;
 
 use crate::model::ModelManager;
-use crate::web::mw_auth::mw_ctx_resolve;
+use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
 use crate::web::mw_res_map::mw_response_mapper;
 use crate::web::{routes_login, routes_static};
 use axum::{middleware, Router};
@@ -47,9 +49,13 @@ async fn main() -> Result<()> {
     // -- Define Routes
     // let routes_rpc = rpc::routes(mm.clone())
     //   .route_layer(middleware::from_fn(mw_ctx_require));
+    let routes_hello = Router::new()
+        .route("/hello", get(|| async { Html("Hello, world!") }))
+        .route_layer(middleware::from_fn(mw_ctx_require));
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm.clone()))
+        .merge(routes_hello)
         // .nest("/api", routes_rpc)
         .layer(middleware::map_response(mw_response_mapper))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
